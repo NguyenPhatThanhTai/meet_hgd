@@ -1,4 +1,4 @@
-    const socket = io.connect('http://localhost:5000');
+    const socket = io.connect('https://meet-hgd.herokuapp.com/');
     var interval;
     var id = '';
     var screenshot;
