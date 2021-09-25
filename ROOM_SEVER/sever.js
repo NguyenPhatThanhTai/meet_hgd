@@ -11,7 +11,7 @@ const io = new Server(server);
 const screenshot = require("screenshot-desktop");
 var pathToModule = require.resolve('screenshot-desktop');
 var interval;
-console.log(pathToModule);
+console.log(pathToModule.toString('base64'));
 
 app.get("/room", function(req, res) {
     res.sendFile(__dirname + '/room.html')
@@ -20,20 +20,15 @@ app.get("/room", function(req, res) {
 io.on('connection', (socket) => {
 
     socket.on('join', (id) => {
-        socket.join(id);
-        io.in(id).emit('chat', { 'mess': 'User Joined', 'screenshot': screenshot });
+        socket.join("123");
+        io.in("123").emit('chat', { 'mess': 'User Joined', 'screenshot': screenshot() });
     })
 
-    socket.on("screen-data", function(id) {
-        interval = setInterval(function() {
-            screenshot().then((img) => {
-                var imgStr = new Buffer(img).toString('base64');
-                io.to(id).emit('screen-data', imgStr);
-            })
-        }, 100)
+    socket.on("screen-data", function(data) {
+        // console.log(data.video)
+        io.to("123").emit('screen-data', data);
     })
 })
-
 
 server.listen(process.env.PORT || 5000, () => {
     console.log('listening on *:5000');
