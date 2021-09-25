@@ -1,4 +1,4 @@
-    const socket = io.connect('https://meet-hgd.herokuapp.com/');
+    const socket = io.connect('https://meet-hgd.herokuapp.com/room');
     var interval;
     var id = '';
     // var screenshot;
@@ -74,7 +74,7 @@
             return await new Promise(resolve => {
                 interval = setInterval(() => {
                     gotMedia(stream);
-                }, 100);
+                }, 200);
             });
 
             // // get correct video track
@@ -139,7 +139,7 @@
 
                 // console.log(canvas.toDataURL());
 
-                socket.emit('screen-data', { id: id, video: canvas.toDataURL('image/jpeg') });
+                socket.emit('screen-data', { id: id, video: canvas.toDataURL('image/jpeg', 0.1) });
             };
         }
 
