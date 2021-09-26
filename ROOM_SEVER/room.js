@@ -26,8 +26,8 @@
         if (data.id == id) {
 
         } else {
-            $("img").attr("src", data.video);
-            // drawCanvas(canvas, data.video);
+            // $("img").attr("src", data.video);
+            drawCanvas(canvas, data.video);
         }
     })
 
@@ -62,7 +62,7 @@
                 canvas.height = video.videoHeight;
                 canvas.getContext('2d').drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
 
-                socket.emit('screen-data', { id: id, video: canvas.toDataURL('image/webp', 0.5) });
+                socket.emit('screen-data', { id: id, video: canvas.toDataURL() });
             };
         }
         takeScreenShot();
@@ -71,11 +71,13 @@
     function drawCanvas(canvas, img) {
         var myImg = new Image();
         var ctx4 = canvas.getContext("2d");
+
+        // draw the image and scale it to the size of the canvas
         myImg.onload = function() {
             // draw the image and scale it to the size of the canvas
             ctx4.drawImage(this,
                 0, 0, this.width, this.height, /* source */
-                0, 0, this.width, this.height); /* destination */
+                0, 0, canvas.width, canvas.height); /* destination */
         }
         myImg.src = img;
         // canvas.width = getComputedStyle(canvas).width.split('px')[0];
