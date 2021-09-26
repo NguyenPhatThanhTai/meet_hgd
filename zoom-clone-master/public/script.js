@@ -1,4 +1,4 @@
-const socket = io("/");
+const socket = io.connect('https://meet-hgd.herokuapp.com/');
 const chatInputBox = document.getElementById("chat_message");
 const all_messages = document.getElementById("all_messages");
 const main__chat__window = document.getElementById("main__chat__window");
