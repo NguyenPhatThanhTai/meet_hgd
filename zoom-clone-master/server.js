@@ -8,6 +8,7 @@ const io = require("socket.io")(server);
 const { ExpressPeerServer } = require("peer");
 const peerServer = ExpressPeerServer(server, {
     debug: true,
+    allow_discovery: true,
 });
 
 app.set("view engine", "ejs");
