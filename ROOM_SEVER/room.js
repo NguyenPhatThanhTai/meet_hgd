@@ -26,8 +26,8 @@
         if (data.id == id) {
 
         } else {
-            $("img").attr("src", data.video);
-            // drawCanvas(canvas, data.video);
+            // $("img").attr("src", data.video);
+            drawCanvas(canvas, data.video);
         }
     })
 
