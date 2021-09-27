@@ -13,6 +13,7 @@ var peer = new Peer(undefined, {
 });
 
 let myVideoStream;
+let mySharedStream;
 var userIdSend;
 
 var getUserMedia =
@@ -35,6 +36,8 @@ navigator.mediaDevices
             console.log("==========================" + call.metadata.type)
             if (call.metadata.type == "screensharing") {
                 video.id = "stream-video";
+            } else if (call.metadata.type == "stoppedscreen") {
+                document.getElementById("stream-video").innerHTML = "";
             } else {
                 video.id = "user-video";
             }
@@ -70,6 +73,8 @@ peer.on("call", function(call) {
     console.log("==========================" + call.metadata.type)
     if (call.metadata.type == "screensharing") {
         video.id = "stream-video";
+    } else if (call.metadata.type == "stoppedscreen") {
+        document.getElementById("stream-video").innerHTML = "";
     } else {
         video.id = "user-video";
     }
@@ -154,6 +159,13 @@ const sharedScreen = () => {
     navigator.mediaDevices.getDisplayMedia({
         video: { mediaSource: 'screen' },
     }).then((record) => {
+        record.getVideoTracks()[0].onended = function() {
+            console.log("stopped shared screen")
+            document.getElementById("stream-video").innerHTML = "";
+            var call = peer.call(userIdSend, record, {
+                metadata: { "type": "stoppedscreen" }
+            });
+        };
         var video = document.createElement("video");
         video.id = "stream-video"
         addVideoStream(video, record);
