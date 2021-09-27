@@ -1,4 +1,4 @@
-const socket = io.connect('https://meet-hgd.herokuapp.com/');
+const socket = io.connect('localhost:3030');
 const chatInputBox = document.getElementById("chat_message");
 const all_messages = document.getElementById("all_messages");
 const main__chat__window = document.getElementById("main__chat__window");
@@ -8,8 +8,8 @@ myVideo.muted = true;
 
 var peer = new Peer(undefined, {
     path: "/peerjs",
-    host: "meet-hgd.herokuapp.com",
-    port: "",
+    host: "/",
+    port: "3030",
 });
 
 let myVideoStream;
@@ -31,7 +31,13 @@ navigator.mediaDevices
 
         peer.on("call", (call) => {
             call.answer(stream);
-            const video = document.createElement("video");
+            var video = document.createElement("video");
+            console.log("==========================" + call.metadata.type)
+            if (call.metadata.type == "screensharing") {
+                video.id = "stream-video";
+            } else {
+                video.id = "user-video";
+            }
 
             call.on("stream", (userVideoStream) => {
                 addVideoStream(video, userVideoStream);
@@ -60,10 +66,16 @@ navigator.mediaDevices
     });
 
 peer.on("call", function(call) {
+    var video = document.createElement("video");
+    console.log("==========================" + call.metadata.type)
+    if (call.metadata.type == "screensharing") {
+        video.id = "stream-video";
+    } else {
+        video.id = "user-video";
+    }
     getUserMedia({ video: true, audio: true },
         function(stream) {
             call.answer(stream); // Answer the call with an A/V stream.
-            const video = document.createElement("video");
             call.on("stream", function(remoteStream) {
                 addVideoStream(video, remoteStream);
             });
@@ -81,7 +93,9 @@ peer.on("open", (id) => {
 // CHAT
 
 const connectToNewUser = (userId, streams) => {
-    var call = peer.call(userId, streams);
+    var call = peer.call(userId, streams, {
+        metadata: { "type": "user" }
+    });
     console.log(call);
     var video = document.createElement("video");
     call.on("stream", (userVideoStream) => {
@@ -96,18 +110,22 @@ const addVideoStream = (videoEl, stream) => {
         videoEl.play();
     });
 
-    videoGrid.append(videoEl);
-    let totalUsers = document.getElementsByTagName("video").length;
-    if (totalUsers > 1) {
-        for (let index = 0; index < totalUsers; index++) {
-            document.getElementsByTagName("video")[index].style.width =
-                100 / totalUsers + "%";
-
-            document.getElementsByTagName("video")[index].addEventListener("click", function() {
-                this.style = "width: 1500px; height: 500px"
-            });
-        }
+    if (videoEl.id == "stream-video") {
+        document.getElementById("stream-video").append(videoEl)
+    } else {
+        videoGrid.append(videoEl);
     }
+    let totalUsers = document.getElementsByTagName("video").length;
+    // if (totalUsers > 1) {
+    //     for (let index = 0; index < totalUsers; index++) {
+    //         document.getElementsByTagName("video")[index].style.width =
+    //             100 / totalUsers + "%";
+
+    //         document.getElementsByTagName("video")[index].addEventListener("click", function() {
+    //             this.style = "width: 1500px; height: 500px; display: block"
+    //         });
+    //     }
+    // }
 };
 
 const playStop = () => {
@@ -137,12 +155,19 @@ const sharedScreen = () => {
         video: { mediaSource: 'screen' },
     }).then((record) => {
         var video = document.createElement("video");
-        video.id = 'screenShared';
+        video.id = "stream-video"
         addVideoStream(video, record);
+        // video.srcObject = record;
+        // video.addEventListener("loadedmetadata", () => {
+        //     video.play();
+        // });
 
-        var call = peer.call(userIdSend, record);
-        console.log(call);
-        var video = document.createElement("video");
+        // document.getElementById("stream-video").append(video)
+        var call = peer.call(userIdSend, record, {
+            metadata: { "type": "screensharing" }
+        });
+        // console.log(call);
+        // var video = document.createElement("video");
         // call.on("stream", (userVideoStream) => {
         //     console.log(userVideoStream);
         //     // addVideoStream(video, userVideoStream);

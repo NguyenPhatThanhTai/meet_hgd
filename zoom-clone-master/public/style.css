@@ -11,38 +11,23 @@ body {
     font-family: "Roboto", sans-serif;
 }
 
-#video-grid {
-    display: flex;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    align-items: center;
-    flex-wrap: wrap;
-    overflow-y: auto;
-}
-
-video {
-    display: block;
-    flex: 1;
-    object-fit: cover;
-    border: 5px solid #000;
-    max-width: 600px;
-}
-
 .main {
     height: 100%;
-    display: flex;
+    width: 100%;
+    overflow: hidden;
 }
 
 .main__left {
     flex: 0.8;
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 .main__right {
     flex: 0.2;
-    display: flex;
+    display: none;
+    /*sua o day*/
     flex-direction: column;
     background-color: #242324;
     border-left: 1px solid #3d3d42;
@@ -51,9 +36,32 @@ video {
 .main__videos {
     flex-grow: 1;
     background-color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+}
+
+#video-grid {
+    float: right;
+    height: 100%;
+    width: 20%;
+}
+
+#video-grid video {
+    border-radius: 12px;
+    display: block;
+    border: 5px solid rgb(0, 0, 0);
+    width: 100%;
+    border-radius: 20px;
+    padding: 5px;
+}
+
+#stream-video {
+    height: 100%;
+    width: 80%;
+    float: left;
+}
+
+#stream-video video {
+    height: auto;
+    width: 100%;
 }
 
 .main__controls {
@@ -62,6 +70,9 @@ video {
     color: #d2d2d2;
     padding: 5px;
     justify-content: space-between;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 
 .main__controls_block {
@@ -134,5 +145,9 @@ video {
 }
 
 .unmute {
+    color: red;
+}
+
+unmute {
     color: red;
 }
