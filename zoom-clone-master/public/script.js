@@ -8,7 +8,7 @@ myVideo.muted = true;
 
 var peer = new Peer(undefined, {
     path: "/peerjs",
-    host: "https://www.nguyenthanhhao.name.vn/",
+    host: "/",
     port: "80",
     secure: true,
 });
