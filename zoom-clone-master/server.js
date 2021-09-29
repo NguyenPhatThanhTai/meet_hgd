@@ -99,4 +99,4 @@ async function getList(room) {
     return obj;
 }
 
-server.listen(process.env.PORT || 80);
+server.listen(process.env.PORT || 3030);
