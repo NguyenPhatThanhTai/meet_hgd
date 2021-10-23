@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const fs = require("fs");
 const server = require("http").Server(app);
 var request = require('request');
 const { v4: uuidv4 } = require("uuid");
@@ -25,7 +26,7 @@ app.get("/call/:room", (req, res) => {
     res.render("room", { roomId: req.params.room });
 });
 
-app.get("/video", function(req, res) {
+app.get("/videoURL", function(req, res) {
     // var fileUrl = 'https://ia601402.us.archive.org/35/items/KSCNMD-S2-09-720/Kobayashi-san%20Chi%20no%20Maid%20Dragon%20S2%20-%2009.720.ia.mp4';
     var fileUrl = req.query.url;
 
@@ -67,6 +68,34 @@ app.get("/video", function(req, res) {
 
         request(options).pipe(res);
     }
+});
+
+app.get("/video", function(req, res) {
+    const range = req.headers.range;
+    if (!range) {
+        res.status(400).send("Requires Range header");
+    }
+
+    const videoPath = "video/titan.mp4";
+    const videoSize = fs.statSync("video/titan.mp4").size;
+
+    const CHUNK_SIZE = 10 ** 6;
+    const start = Number(range.replace(/\D/g, ""));
+    const end = Math.min(start + CHUNK_SIZE, videoSize - 1);
+
+    const contentLength = end - start + 1;
+    const headers = {
+        "Content-Range": `bytes ${start}-${end}/${videoSize}`,
+        "Accept-Ranges": "bytes",
+        "Content-Length": contentLength,
+        "Content-Type": "video/mp4",
+    };
+
+    res.writeHead(206, headers);
+
+    const videoStream = fs.createReadStream(videoPath, { start, end });
+
+    videoStream.pipe(res);
 });
 
 io.on("connection", (socket) => {
