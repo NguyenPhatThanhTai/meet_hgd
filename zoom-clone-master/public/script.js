@@ -9,7 +9,7 @@ myVideo.muted = true;
 var peer = new Peer({
     path: "/peerjs",
     host: "/",
-    port: "",
+    port: "8080",
     secure: true,	
     config: { 'iceServers': [
     { url: 'stun:stun01.sipphone.com' },
